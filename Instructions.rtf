@@ -1,0 +1,205 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww22420\viewh19540\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\qc\partightenfactor0
+
+\f0\b\fs24 \cf0 Instructions for CalcDepthEF\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b0 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 Compiling the code\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b0 \cf0 \
+CalcDepthEF takes as input a set of files in .sam format, and a reference sequence, and calculates the effective depth at each position of the alignment.  CalcDepthEF contains code developed for the SAMFIRE package, which includes a variety of tools for analysing genome sequence data and allows a more generalised analysis of genome sequence data.\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 Compiling the code\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b0 \cf0 \
+CalcDepthEF is compiled with the command line\
+\
+make cdef\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 Running the code\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b0 \cf0 \
+The code requires a series of .sam files to be placed in the /Data directory.  The script setup.sh runs various pre-processing steps on these data, sorting reads by their index, and creating the file column.in, which is used to identify the part of the index which contains information about paired-end reads.\
+\
+The code can then be run as follows:\
+\
+./calcdepthef\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 Outputs:
+\b0 \
+\
+
+\b Joined?.out
+\b0  is a list of aligned single reads in the format:\
+\
+<Position of first base> <Sequence>\
+\
+Files are output for all inputs specified in Input_files.in.  Reads in each file report a null \'93-\'93 allele for all positions that fail the applied tests of quality.\
+\
+Joined?.out is a list of joined and aligned sequences.  Sequences are reported as in Aligned?.out, albeit that paired-end reads are joined by \'91-\'91 nucleotides.  Files are produced for all inputs specified in Input_files.in.  If paired end reads are not specified, these files will be identical to the Aligned?.out files.\
+\
+
+\b Single_locus_trajectories.out
+\b0  is a list of identified polymorphisms recorded over time.  The format of this is:\
+\
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+\cf0 \CocoaLigature0 Locus Consensus Variant #Time-points [#Time #A #C #G #T N] where the time of sampling, the numbers of each identifiable nucleotide (only A, C, G, and T are considered), and the total number of samples are recorded for each time point for each trajectory.\
+\
+For example:\
+\
+312 A T 3 0 312 0 1 23 326 2 273 1 0 56 330 4 513 1 2 452 968\
+\
+would indicate an A to T mutation at locus 312, that data was observed at three time points (i.e. 0, 2, 4), and gives details of the numbers of A,C,G, and T alleles observed at each time point: (312, 0, 1, 23), (273, 1 0 56), and (513, 1, 2, 452) respectively.  The total number of reads at each time point is specified as 326, 330, and 968 respectively.\
+\
+By default, trajectories are shown for all loci at which a polymorphism was identified for at least one time point.\
+\
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\b \cf0 Variants?.out
+\b0  is a list of variants identified at every locus for each time point.  The format is:\
+\
+Locus #A #C #G #T\
+\
+Variants are shown in this file irrespective of whether they are formally called as polymorphisms.\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \CocoaLigature1 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \CocoaLigature0 Csl.out
+\b0 : A file containing the value of the optimised parameter C.\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \CocoaLigature1 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 Depths?.out
+\b0 : Files contain effective depth data in the format\
+\
+<Locus in reference sequence> <Absolute read depth at this locus> <Effective read depth at this locus>\
+\
+\
+\
+\
+\
+
+\b Code options:
+\b0 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\i \cf0 \CocoaLigature0 --pairs p	[default 0]
+\i0   : Flag to indicate that the data contains paired-end read information\
+\
+Explanation:\
+\
+Where paired-end reads cover distinct regions of the genome, Samfire exploits this information to create joined reads, which span an increased proportion of the genome; such information is often valuable in providing information about partial haplotype composition.  Setting p to 1 instructs Samfire to search for, and join, paired reads.\
+\
+
+\i --pl p		[default 3] 
+\i0  : Position of first element in the .sam file QNAME (comma delimited) containing paired-end information (counting from zero).\
+	\
+Explanation:\
+\
+Information in the QNAME string is stored in a colon-separated manner, however the position of the paired-end information is not always consistent.  The --pl flag allows the position from which data is retrieved to be specified.\
+\
+Example 1:\
+M00196:19:000000000-A0YC6:1:4:8245:10740_1:N:0:37\
+M00196:19:000000000-A0YC6:1:4:8245:10740_2:N:0:37\
+\
+Here the paired-end read data are given as 8245:10740_1 and 8245:10740_2.  Setting --pl 5 recovers these data.\
+\
+Example 2:\
+N73019:2:13:10640:17123#ACAGTG\
+\
+Here the values 10640:17123 specify paired-end reads.  The default value --pl 3 recovers these.\
+\
+
+\i --min_qual q	
+\i0 [default 30] : Minimum required PHRED score to include a nucleotide\
+\
+Explanation: Base quality is used in two distinct ways in Samfire.  Firstly, reads are processed according to their median read quality.  Where the median read quality is lower than the minimum quality, the read is trimmed from either end until either the median quality is sufficiently high, or the sequence is discarded.  The end from which the least nucleotides need to be trimmed to achieve this is chosen for trimming.  Secondly, individual nucleotides in a read are processed according to the minimum quality.  Nucleotides not reaching the required quality are discarded.\
+\
+
+\i --ali_qual q	
+\i0 [default 30] : Minimum required alignment quality.  Details of alignment quality are read from the .sam file\
+\
+
+\i --ali_inc a		
+\i0 [default 0]  : Flag to include all sequences with unknown alignment quality.  Necessary where no alignment quality is recorded.\
+\
+
+\i --min_rlen l	
+\i0 [default 30] : Minimum number of alleles that have to be reported by a short read for the read to be included in the output\
+\
+Explanation: Once all other filtering steps are completed, the number of alleles reported by a read is measured against a minimum value, removing reads that report very few high quality nucleotides.\
+\
+
+\i --ddup d	
+\i0 [default -1] : Removes duplicate sequences, namely reads spanning identical loci (in both paired reads where appropriate) with no more than d differences in sequence\
+\
+
+\i --verb v	
+\i0 [default 0]  : Flag to produce more verbose output\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \CocoaLigature1 \
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\i \cf0 \CocoaLigature0 --q_cut q 		[default 0.01]
+\i0  : minimum frequency at which a polymorphism is identified.\
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\b \cf0 \
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\b0 \cf0 Here this parameter is used to filter out low-frequency polymorphisms.  \
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\b \cf0 \
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\i\b0 \cf0 --nmin n [default 10]
+\i0  : minimum number of variant counts required to call a polymorphism\
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\b \cf0 \
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\i\b0 \cf0 --dq_cut q	[default 0.9]
+\i0  : mean change in allele frequency above which a trajectory is excluded from noise calculations.  Here the default is set to exclude polymorphisms which are fixed for distinct alleles in different sample\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \CocoaLigature1 \
+\pard\tx529\pardeftab529\pardirnatural\partightenfactor0
+
+\i \cf0 \CocoaLigature0 --dep_cut q	[default 100]
+\i0  : minimum read depth for a variant to be considered in the noise calculation\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \CocoaLigature1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\i \cf0 \CocoaLigature0 --uniq v	[default 0]
+\i0   : Only output one trajectory per locus (in the case where there are multiple alles at a single locus)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \CocoaLigature1 \
+\
+\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 Notes:
+\b0 \
+\
+This code accompanies the manuscript \'91Measuring the depth of viral sequence data\'92.  Example input data, representing the norovirus samples described in the paper, is included in the Data directory.  Some example outputs may be found in the Example_outputs directory}
